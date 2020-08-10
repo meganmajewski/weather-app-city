@@ -1,4 +1,5 @@
 import React from "react";
+import kToF from "../util/utils";
 
 export interface Weather {
   temp: {
@@ -14,19 +15,19 @@ export interface Weather {
 }
 export default function WeatherByDay(props: Weather) {
   function printCurrentWeather() {
-    return <div>Currently: {props.temp.current} K</div>;
+    return <div>Currently: {kToF(props.temp.current)}F</div>;
   }
   function printEve() {
-    return <div>This Evening: {props.temp.day} K </div>;
+    return <div>This Evening: {kToF(props.temp.day)}F </div>;
   }
   function printDay() {
-    return <div>During the day: {props.temp.day} K </div>;
+    return <div>During the day: {kToF(props.temp.day)}F </div>;
   }
   function printHigh() {
-    return <div>High: {props.temp.max} K </div>;
+    return <div>High: {kToF(props.temp.max)}F </div>;
   }
   function printLow() {
-    return <div>Low: {props.temp.min} K</div>;
+    return <div>Low: {kToF(props.temp.min)}F</div>;
   }
   function printIcon() {
     return (

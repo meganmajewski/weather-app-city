@@ -1,13 +1,11 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import useAxios from "axios-hooks";
 import { useUserContext } from "./context/UserContext";
 import WeatherByDay, { Weather } from "./WeatherByDay";
-export interface UserLocation {
-  lat: string;
-  lon: string;
-}
+import CityInput from "./CityInput";
+
 export default function CurrentWeather() {
-  const { location, updateUserLocation } = useUserContext();
+  const { location } = useUserContext();
   const [{ data, loading, error }, getWeather] = useAxios(
     {
       url: "weather",
@@ -15,22 +13,12 @@ export default function CurrentWeather() {
     },
     { manual: true }
   );
-  const getUserLocation = useCallback(() => {
-    if (location.lon === undefined) {
-      updateUserLocation();
-    }
-  }, [location.lon, updateUserLocation]);
-  //two use effects because this one runs only once
-  useEffect(() => {
-    getUserLocation();
-  }, [getUserLocation]);
   //use effect to get weather runs each time a location changes
   useEffect(() => {
-    if (location.lat && location.lon) {
+    if (location.city) {
       getWeather({
         params: {
-          lat: location.lat,
-          lon: location.lon,
+          q: `${location.city}`,
           appid: "5c1af4026688449afa523c5f3ce4e335",
         },
       }).catch((err) => console.log(err)); //show error somehow to user;
@@ -38,7 +26,7 @@ export default function CurrentWeather() {
   }, [location, getWeather]);
 
   function formatAndPrintData() {
-    if (data.main.temp && data.weather[0].icon) {
+    if (data.main && data.main.temp && data.weather[0].icon) {
       let formatData: Weather = {
         temp: { current: data.main.temp },
         icon: data.weather[0].icon,
@@ -51,5 +39,11 @@ export default function CurrentWeather() {
   if (loading) return <div>loading....</div>;
   if (error) return <div>ERROR</div>;
   else if (data) return <>{formatAndPrintData()}</>;
-  else return <div>Current Weather: ERROR</div>;
+  else
+    return (
+      <div>
+        Current Weather:
+        <CityInput />
+      </div>
+    );
 }

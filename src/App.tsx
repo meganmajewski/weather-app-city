@@ -16,9 +16,7 @@ function App() {
           <UserProvider>
             <Switch>
               <Route path="/current-weather" component={CurrentWeather} />
-              <Route path="/five-day-forecast">
-                <WeekAhead />
-              </Route>
+              <Route path="/five-day-forecast" component={WeekAhead}></Route>
               <Route path="/">
                 Weather App Code Sample
                 <p>Megan Majewski</p>

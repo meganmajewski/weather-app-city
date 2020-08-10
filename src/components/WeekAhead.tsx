@@ -1,9 +1,10 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import useAxios from "axios-hooks";
 import { useUserContext } from "./context/UserContext";
 import WeatherByDay, { Weather } from "./WeatherByDay";
+import CityInput from "./CityInput";
 export default function WeekAhead() {
-  const { location, updateUserLocation } = useUserContext();
+  const { location } = useUserContext();
   const [{ data, loading, error }, getWeather] = useAxios(
     {
       url: "forecast/daily",
@@ -11,26 +12,14 @@ export default function WeekAhead() {
     },
     { manual: true }
   );
-  const getUserLocation = useCallback(() => {
-    if (location.lon === undefined) {
-      updateUserLocation();
-    }
-  }, [location.lon, updateUserLocation]);
-  //two use effects because this one runs only once
-  useEffect(() => {
-    getUserLocation();
-  }, [getUserLocation]);
   //use effect to get weather runs each time a location changes
   useEffect(() => {
-    if (location.lat && location.lon) {
+    if (location.city) {
       getWeather({
         params: {
-          lat: location.lat,
-          lon: location.lon,
+          q: `${location.city}`,
           // API mentions ability to pass in unit for c / f instead of K but it doesn't seem to work
-          // unit: "imperial",
-          //API mentions count param but it doesnt seem to work
-          cnt: "5",
+          // units: "imperial",
           appid: "5c1af4026688449afa523c5f3ce4e335",
         },
       }).catch((err) => console.log(err)); //should show error somehow to user;
@@ -74,5 +63,10 @@ export default function WeekAhead() {
         </div>
       </>
     );
-  else return <div>The Week Ahead: ERROR</div>;
+  else
+    return (
+      <div>
+        The Week Ahead: <CityInput />
+      </div>
+    );
 }
